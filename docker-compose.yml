@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  goformat-db:
+    image: mariadb
+    container_name: GoFormatDB-v2
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root # DB 密碼
+      MYSQL_DATABASE: goformat  # 資料庫名稱
+    volumes:
+      - /home/GoFormat/database:/var/lib/mysql
+    networks:
+      - web_service
+
+  golang:
+    image: joshgu/goformat:v1.12.13
+    # build:
+    #   context: .
+    container_name: ${PROJECT_NAME}
+    restart: always
+    ports:
+      - 8889:8080
+    environment:
+      - ENV=${ENV} # 各站環境變數
+      - PROJECT_NAME=${PROJECT_NAME} # 專案名稱
+    working_dir: /go/src/${PROJECT_NAME}
+    volumes:
+      - .:/go/src/${PROJECT_NAME}
+      - ${LOG}:/app/log/
+    networks:
+      - web_service
+    command: "fresh runner.conf"
+
+
+networks:
+  web_service:
+    external: true
