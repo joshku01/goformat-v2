@@ -1,0 +1,26 @@
+master:
+  # master db 設定
+  host: 172.17.0.1
+  username: root
+  password: root
+  database: goformat
+
+slave:
+  # slave db 設定
+  host: 172.17.0.1
+  username: root
+  password: root
+  database: goformat
+
+redis:
+  redis_host: Durian_6383
+  redis_port: 6379
+  redis_password: rd3Redis
+
+connection_pool:
+  # 最大可允許的閒置連線數
+  max_idle: 100
+  # 最大建立的連線數，默認為0不限制(reids 預設最大連線量)
+  max_active: 10000
+  # 連線過期時間，默認為0表示不做過期限制
+  timeout: 300
