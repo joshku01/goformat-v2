@@ -2,20 +2,11 @@ kind: pipeline
 type: docker
 name: default
 
-# disable default git clone
-clone:
-  disable: true
-
-## 定義基本路徑
-workspace:
-  base: /go/src
-  path: ${DRONE_REPO_NAME}
-
 steps:
   - name: build
-    image: alpine
-    environment:
-      USERNAME:
-        from_secret: docker_username
-      PASSWORD:
-        from_secret: docker_password
+    image: golnag
+    commands:
+      - go build
+      - go test
+image_pull_secrets:
+  - dockerconfigjson
