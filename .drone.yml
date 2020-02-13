@@ -3,8 +3,8 @@ type: docker
 name: default
 
 # disable default git clone
-clone:
-  disable: true
+#clone:
+#  disable: true
 
 ## 定義基本路徑
 workspace:
