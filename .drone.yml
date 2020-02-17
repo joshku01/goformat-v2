@@ -7,63 +7,12 @@ name: default
 #  disable: true
 
 steps:
-  ## custom git clone default
-  - name: clone
-    image: plugins/drone-git:latest
-    environment:
-      RSYNC_KEY:
-        from_secret: rsync_key
+  - name: greeting
+    image: alpine
     commands:
-      ## add git config github
-      - git config --global user.name "joshku01"
-      - git config --global user.email "sd520255@gmail.com"
-      - mkdir ~/.ssh
-      - echo "$RSYNC_KEY" > ~/.ssh/id_rsa
-      - chmod 600 ~/.ssh/id_rsa
-      ## add to known hosts
-      - ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-      ## git clone & git submodule
-      - git clone ${DRONE_GIT_SSH_URL} .
-      - git checkout $DRONE_COMMIT
-      - git submodule update --recursive --init
+      - echo hello
+      - echo world
 
-  ## 備份 vendor.json & 設定 k8s image tag
-  - name: backup-vendor-json
-    image: nexus.cqgame.games/rd3/drone-git:latest
-    commands:
-      - echo "$(git rev-parse --short=7 ${DRONE_COMMIT_SHA})-dev" > ./tmp.txt
-      - cat ./tmp.txt > .tags
-      - echo ",latest-${DRONE_BRANCH}" >> .tags
-      - mv vendor/vendor.json vendor.json
-    when:
-      ref: [refs/heads/develop, refs/heads/qatest, refs/heads/int]
-
-  ## 備份正式站 vendor.json & 設定 k8s image tag
-  - name: backup-prod-vendor-json
-    image: nexus.cqgame.games/rd3/drone-git:latest
-    commands:
-      - echo ${DRONE_TAG}-prod  > ./tmp.txt
-      - cat ./tmp.txt > .tags
-      - echo ",latest-prod" >> .tags
-      - mv vendor/vendor.json vendor.json
-    when:
-      ref: [refs/tags/v*,refs/tags/t*]
-
-  ## 編譯 golang
-  - name: build-golang-code
-    image: nexus.cqgame.games/rd3/drone-govendor:latest
-    commands:
-      - mv vendor.json vendor/vendor.json
-      - govendor sync
-      - swag init
-
-  ## 重新覆蓋 .tag 檔案內容
-  - name: rebuild-tag-file
-    image: nexus.cqgame.games/rd3/drone-git:latest
-    commands:
-      - cat ./tmp.txt > .tags
-      - cat .tags
-      -
 ## VM 掛載路徑
 volumes:
   - name: cache
